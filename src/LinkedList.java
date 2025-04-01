@@ -27,26 +27,25 @@ public class LinkedList {
 
     // remove a card from a specific index
     public Card remove_from_index(int index) {
-        // FIXME
-        if (index < 0 || index >= size) {                                // THIS IS JUST FOR TESTING PURPOSE
-            System.out.println("The desired index is out of bounds for removing " + index);
+        // Ensure the index is valid
+        if (index < 0 || index >= size) {
+            System.out.println("The desired index is out of bounds for adding " + index);
             return null;
         }
-
-        if (head == null) return null;                                  // Can add this to the previous condition too
-
         if (index == 0) {
-            return remove_from_head();                                // Update the size
+            return remove_from_head();
         }
         if (index == size - 1) {
             return remove_from_tail();
         }
 
+        // Traverse to the desired index
         Node curr = head;
         for (int i = 1; i <= index; i++) {
             curr = curr.next;
         }
 
+        // Remove the node
         curr.prev.next = curr.next;
         curr.next.prev = curr.prev;
         size--;                                 // Update the size
@@ -56,8 +55,8 @@ public class LinkedList {
 
     // insert a card at a specific index
     public void insert_at_index(Card x, int index) {
-        // FIXME
-        if (index < 0 || index > size) {                                // THIS IS JUST FOR TESTING PURPOSE
+        // Ensure the index is valid
+        if (index < 0 || index > size) {
             System.out.println("The desired index is out of bounds for adding " + index);
             return;
         }
@@ -70,13 +69,16 @@ public class LinkedList {
             return;
         }
 
-        Node newNode = new Node(x);
+        // Traverse to the desired index
         Node curr = head;
         for (int i = 1; i < index; i++) {               // Used i < index so that curr stops at one node before the desired index
             curr = curr.next;
         }
 
-        newNode.next = curr.next;                       // Will throw an exception if curr is null (the desired index is larger than the size of the list)
+        // Insert the new node
+        Node newNode = new Node(x);
+
+        newNode.next = curr.next;
         newNode.prev = curr;
         curr.next.prev = newNode;
         curr.next = newNode;
@@ -85,10 +87,11 @@ public class LinkedList {
     }
 
     // swap two cards in the deck at the specific indices
-    public void swap(int index1, int index2) {                                          // --> CHECK THIS LATER
-        // FIXME
+    public void swap(int index1, int index2) {
+        // Do nothing if indices are the same
         if (index1 == index2) { return; }
-        else if (index1 < index2) {
+
+        if (index1 < index2) {
             Card card2 = remove_from_index(index2);
             Card card1 = remove_from_index(index1);
             insert_at_index(card2, index1);
@@ -100,38 +103,10 @@ public class LinkedList {
             insert_at_index(card1, index2);
             insert_at_index(card2, index1);
         }
-
-
-
-
-//        int i = 0;
-//        int j = 0;
-//        Node n1 = head;
-//        Node n2 = head;
-//
-//        while (i <= index1 || j <= index2) {
-//            if (i != index1) {
-//                n1 = n1.next;
-//                i++;
-//            }
-//            if (j != index2) {
-//                n2 = n2.next;
-//                j++;
-//            }
-//        }
-//
-//        n1.prev.next = n2;
-//        n2.prev.next = n1;
-//        n1.next = n2.next;
-//        n2.next = n1.next;
-//        n1.next.prev = n1;
-//        n2.next.prev = n2;
-//        n2.prev = n1.prev;
     }
 
     // add card at the end of the list
     public void add_at_tail(Card data) {
-        // FIXME
         if (head == null) {
             head = new Node(data);
             tail = head;
@@ -144,7 +119,8 @@ public class LinkedList {
         size++;
     }
 
-    public void add_at_head(Card data) {                    // This is a self-made helper method
+    // This is a self-made helper method
+    private void add_at_head(Card data) {
         if (head == null) {
             head = new Node(data);
             tail = head;
@@ -160,11 +136,12 @@ public class LinkedList {
 
     // remove a card from the beginning of the list
     public Card remove_from_head() {
-        // FIXME
         if (head == null) return null;
 
         Card removedData = head.data;
-        if (head == tail) {                 // If the list only had one element and would be empty after removing the node, update tail as well
+
+        // If list has only one element, update head and tail
+        if (head == tail) {
             head = null;
             tail = null;
         }
@@ -177,10 +154,13 @@ public class LinkedList {
         return removedData;
     }
 
-    public Card remove_from_tail() {
+    // This is a self-made helper method
+    private Card remove_from_tail() {
         if (head == null) return null;
 
         Card removedData = tail.data;
+
+        // If list has only one element, update head and tail
         if (head == tail) {
             head = null;
             tail = null;

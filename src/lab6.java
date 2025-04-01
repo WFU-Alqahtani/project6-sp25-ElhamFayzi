@@ -3,7 +3,6 @@ import java.util.Scanner;
 public class lab6 {
 
     public static LinkedList initialize_deck() {
-
         LinkedList deck = new LinkedList();
 
         // populate linked list with a single deck of cards
@@ -22,13 +21,14 @@ public class lab6 {
 
     private static void play_blind_mans_bluff(LinkedList player1, LinkedList computer, LinkedList deck) {
         System.out.println("\nStarting Blind mans Bluff \n");
-        // play the game FIXME
+
         int wins = 0;
         int losses = 0;
         int lossesInARow = 0;
 
         Scanner scnr = new Scanner(System.in);
 
+        // Game loops for 5 rounds
         for (int i = 0; i < 5; i++) {
             Card computerCard = computer.remove_from_head();
             Card playerCard = player1.remove_from_head();
@@ -37,10 +37,21 @@ public class lab6 {
             computerCard.print_card();
             System.out.println();
 
-            System.out.print("Is your card higher or lower? (Enter H or L): ");
-            char guess = Character.toLowerCase(scnr.next().charAt(0));
+            char guess;
+            boolean validInput = true;
+
+            // Loop until input is valid
+            do {
+                System.out.print("Is your card higher or lower? (Enter H or L): ");
+                guess = Character.toLowerCase(scnr.next().charAt(0));
+                if (guess != 'h' && guess != 'l') {
+                    validInput = false;
+                }
+            } while (!validInput);
+
 
             boolean correctGuess;
+            // Compare player's card against computer's card
             if (playerCard.getRank().ordinal() > computerCard.getRank().ordinal()) {
                 correctGuess = (guess == 'h');
             }
@@ -48,6 +59,7 @@ public class lab6 {
                 correctGuess = (guess == 'l');
             }
             else {
+                // In case of a rank tie, compare suits, too
                 if (playerCard.getSuit().ordinal() > computerCard.getSuit().ordinal()) {
                     correctGuess = (guess == 'h');
                 }
@@ -62,25 +74,30 @@ public class lab6 {
             computerCard.print_card();
             System.out.println();
 
+            // Check if the guess was correct
             if (correctGuess) {
                 System.out.println("Your guess is correct. You won this round!\n");
                 wins++;
+                lossesInARow = 0;               // Number of losses in a row resets on a win
             }
             else {
                 System.out.println("Your guess is incorrect. You lost this round!\n");
                 losses++;
+                lossesInARow++;
             }
 
-            deck.add_at_head(computerCard);
+            // Adding cards back to the deck
+            deck.add_at_tail(computerCard);
             deck.add_at_tail(playerCard);
 
-            if (losses == 3) {
+            if (lossesInARow == 3) {
                 rage_quit(player1, computer, deck);
-                losses = 0;
-                i = -1;                                     // Resets the number of rounds after rage-quitting.
+                lossesInARow = 0;
+                i = -1;                                     // Reset the number of rounds so that the game restarts from first round
             }
         }
 
+        // Display win/loss statistics
         System.out.println("Game Over!");
         System.out.println("Wins: " + wins);
         System.out.println("Losses: " + losses);
@@ -92,13 +109,15 @@ public class lab6 {
         System.out.println("        Rage Quitting        ");
         System.out.println("-----------------------------");
 
-        while (player1.size > 0 || computer.size > 0) {                         // Tried to remove the remaining cards from player's and computer's deck within the same loop for better time complexity
+        // Return all remaining cards from both player's and computer's hands back to the deck
+        while (player1.size > 0 || computer.size > 0) {                         // Tried to remove the remaining cards from player's and computer's deck within the same loop for runtime for larger inputs
             if (player1.size > 0) deck.add_at_tail(player1.remove_from_head());
             if (computer.size > 0) deck.add_at_tail(computer.remove_from_head());
         }
 
         deck.shuffle(512);
 
+        // Redeal 5 cards to each player after rage-quit
         int num_cards_dealt = 5;
         for (int i = 0; i < num_cards_dealt; i++) {
             player1.add_at_tail(deck.remove_from_head());
