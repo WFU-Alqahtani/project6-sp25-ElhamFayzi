@@ -87,11 +87,22 @@ public class LinkedList {
     // swap two cards in the deck at the specific indices
     public void swap(int index1, int index2) {                                          // --> CHECK THIS LATER
         // FIXME
-        Card card1 = remove_from_index(index1);
-        Card card2 = remove_from_index(index2);
+        if (index1 == index2) { return; }
+        else if (index1 < index2) {
+            Card card2 = remove_from_index(index2);
+            Card card1 = remove_from_index(index1);
+            insert_at_index(card2, index1);
+            insert_at_index(card1, index2);
+        }
+        else {
+            Card card1 = remove_from_index(index1);
+            Card card2 = remove_from_index(index2);
+            insert_at_index(card1, index2);
+            insert_at_index(card2, index1);
+        }
 
-        insert_at_index(card2, index1);
-        insert_at_index(card1, index2);
+
+
 
 //        int i = 0;
 //        int j = 0;
